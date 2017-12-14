@@ -1,0 +1,99 @@
+function [attribute_weight] = My_Relief_Alg (center, class)
+
+% mbership & class 
+% mbership = center;
+% mbership (:, 8) = class;
+mbership = [center class];
+disp ('Membership function:');
+disp (mbership);
+
+weight_new = 0;
+miss = 0;
+hit = 0;
+
+num_rows = size (center, 1);
+num_cols = size (center, 2);
+attribute_weight = zeros (num_cols);    
+new_weight_arr = zeros (num_cols);
+
+flag = zeros (8,1);
+
+for j = 1:1:num_cols
+    for k = 1:1:num_rows
+        flag2 = 1;
+    for i = 1:1:num_rows
+        if (flag2 == 1)
+            current = center (k,j);
+            
+            disp ('Current position: ');
+            disp (current);
+            
+            class1 = class (k,1);
+            flag (k,1) = 1;
+            disp ('Class: ');
+            disp (class1);
+            flag2 = 0;
+        end  
+        
+        % find near_miss
+        if (flag2 == 0) && flag (i, 1) == 0
+            if class1 ~= class (i,1) 
+                if miss == 0
+                    miss = center (i,j);
+                    disp ('Near miss:');
+                    disp (miss);
+                else
+                    if (abs (current - miss)) > (abs  (current - (center (i,j))))
+                    miss = center (i,j);
+                    disp ('Near miss:');
+                    disp (miss);
+                    else 
+                        %miss = miss;
+                        disp ('Near miss:');
+                        disp (miss);
+                    end
+                end
+            end
+            
+            % find near_hit
+            if class1 == class (i,1) && flag (i, 1) == 0
+                if hit == 0
+                    hit = center (i,j);
+                    disp ('Near hit:');
+                    disp (hit);
+                else
+                    if (abs (current - hit)) > (abs (current - (center (i,j))))
+                    hit = center (i,j);
+                    disp ('Near hit:');
+                    disp (hit);
+                    else 
+                        disp ('Near hit:');
+                        disp (hit);
+                    end
+                end
+            end
+        end
+    end
+    
+    % new weight for each sample
+    weight_new = weight_new + abs (center(k,j) - miss) - abs (center(k,j) - hit);
+    disp ('New weight: ');
+    disp (weight_new);
+    new_weight_arr (k ,j) = weight_new;
+    disp (new_weight_arr);
+    
+    miss = 0;
+    hit = 0;
+    flag = zeros (8,1);
+    
+    end
+    
+    % average weight of the attribute
+    attribute_weight = sum (new_weight_arr, 1) / k;
+    disp ('Attribute weight');
+    disp (attribute_weight); 
+    weight_new = 0;
+end
+
+% attribute_weight;
+end
